@@ -8,8 +8,7 @@ function getDaysRemaining(decisionDate: string): number {
   const deadline = new Date(decision);
   deadline.setDate(deadline.getDate() + 60);
   const now = new Date();
-  const diff = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  return diff;
+  return Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 function getDeadlineDate(decisionDate: string): string {
@@ -17,6 +16,34 @@ function getDeadlineDate(decisionDate: string): string {
   const deadline = new Date(decision);
   deadline.setDate(deadline.getDate() + 60);
   return deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function StepIndicator({ current }: { current: 1 | 2 | 3 }) {
+  const steps = ['Upload letter', 'Review denial', 'Get letter'];
+  return (
+    <div className="flex items-center justify-center gap-0 mb-8">
+      {steps.map((label, i) => {
+        const num = i + 1;
+        const done = num < current;
+        const active = num === current;
+        return (
+          <div key={num} className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                done ? 'bg-emerald-500 text-white' : active ? 'bg-blue-700 text-white' : 'bg-slate-200 text-slate-500'
+              }`}>
+                {done ? '✓' : num}
+              </div>
+              <span className={`text-xs mt-1 font-medium whitespace-nowrap ${active ? 'text-blue-700' : done ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {label}
+              </span>
+            </div>
+            {i < 2 && <div className={`w-12 h-0.5 mb-5 mx-1 ${num < current ? 'bg-emerald-400' : 'bg-slate-200'}`} />}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default async function ResultsPage({ params }: { params: { caseId: string } }) {
@@ -37,102 +64,138 @@ export default async function ResultsPage({ params }: { params: { caseId: string
   const isPastDeadline = daysRemaining < 0;
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-blue-900 text-white px-4 py-4">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-lg font-bold">AppealKit</h1>
-          <p className="text-blue-200 text-sm">FEMA Appeal Assistant</p>
+    <main className="min-h-screen bg-slate-50">
+      <header className="bg-gradient-to-r from-blue-950 to-blue-800 text-white px-4 py-4 shadow-md">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="font-bold text-lg">AppealKit</span>
+          </Link>
+          <span className="text-blue-300 text-sm">FEMA Appeal Assistant</span>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
+        <StepIndicator current={2} />
+
         {/* Deadline banner */}
-        {!isPastDeadline ? (
-          <div className={`rounded-xl p-5 ${isUrgent ? 'bg-red-600 text-white' : 'bg-amber-50 border border-amber-200'}`}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{isUrgent ? '⏰' : '📅'}</span>
-              <div>
-                <p className={`font-bold text-lg ${isUrgent ? 'text-white' : 'text-amber-900'}`}>
-                  {isUrgent ? `URGENT: ${daysRemaining} days left to appeal` : `${daysRemaining} days left to appeal`}
-                </p>
-                <p className={`text-sm ${isUrgent ? 'text-red-100' : 'text-amber-700'}`}>
-                  Deadline: {deadlineDate}
-                </p>
-              </div>
+        {isPastDeadline ? (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex gap-4 items-start">
+            <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-bold text-red-800">Standard 60-day deadline has passed</p>
+              <p className="text-red-700 text-sm mt-1">You may still be able to appeal late — call FEMA at <strong>1-800-621-3362</strong> immediately to explain your situation.</p>
             </div>
           </div>
         ) : (
-          <div className="bg-red-50 border border-red-300 rounded-xl p-5">
-            <p className="font-bold text-red-800">⚠️ The standard 60-day appeal deadline has passed</p>
-            <p className="text-red-700 text-sm mt-1">
-              You may still be able to appeal — contact FEMA at 1-800-621-3362 immediately to explain your situation.
-            </p>
+          <div className={`rounded-2xl p-5 flex gap-4 items-center ${isUrgent ? 'bg-red-600 text-white shadow-md' : 'bg-amber-50 border border-amber-200'}`}>
+            <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-extrabold ${isUrgent ? 'bg-red-500' : 'bg-amber-100'}`}>
+              <span className={`text-2xl leading-none ${isUrgent ? 'text-white' : 'text-amber-800'}`}>{daysRemaining}</span>
+              <span className={`text-xs ${isUrgent ? 'text-red-200' : 'text-amber-600'}`}>days</span>
+            </div>
+            <div>
+              <p className={`font-bold text-lg leading-tight ${isUrgent ? 'text-white' : 'text-amber-900'}`}>
+                {isUrgent ? 'Act now — appeal deadline approaching' : 'Days left to appeal'}
+              </p>
+              <p className={`text-sm mt-0.5 ${isUrgent ? 'text-red-100' : 'text-amber-700'}`}>
+                Deadline: {deadlineDate}
+              </p>
+            </div>
           </div>
         )}
 
         {/* Case info */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h2 className="font-bold text-gray-900 mb-3">Your case</h2>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Applicant</span>
-              <span className="font-medium text-gray-900">{caseData.applicant_name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Application #</span>
-              <span className="font-medium text-gray-900">{caseData.application_number}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Disaster #</span>
-              <span className="font-medium text-gray-900">{caseData.disaster_number}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Decision date</span>
-              <span className="font-medium text-gray-900">{caseData.decision_date}</span>
-            </div>
-          </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Your case
+          </h2>
+          <dl className="space-y-3">
+            {[
+              { label: 'Applicant', value: caseData.applicant_name },
+              { label: 'Application #', value: caseData.application_number },
+              { label: 'Disaster #', value: caseData.disaster_number },
+              { label: 'Decision date', value: caseData.decision_date },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
+                <dt className="text-slate-500 text-sm">{label}</dt>
+                <dd className="font-semibold text-slate-900 text-sm">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        {/* What this means */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-start gap-3 mb-3">
-            <span className="text-2xl">📋</span>
+        {/* Why denied */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="flex items-start gap-4 mb-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
             <div>
-              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Why you were denied</p>
-              <h3 className="font-bold text-gray-900 text-lg">{denialCode.title}</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Code: {denialCode.code}</p>
+              <p className="text-xs font-bold text-red-600 uppercase tracking-widest mb-1">Why you were denied</p>
+              <h3 className="font-bold text-slate-900 text-xl">{denialCode.title}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Code: {denialCode.code}</p>
             </div>
           </div>
-          <p className="text-gray-700 leading-relaxed">{denialCode.plain_english_explanation}</p>
+          <p className="text-slate-700 leading-relaxed">{denialCode.plain_english_explanation}</p>
         </div>
 
         {/* Appeal strategy */}
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
-          <h3 className="font-bold text-blue-900 mb-2">💡 Your path to appeal</h3>
-          <p className="text-blue-800 text-sm leading-relaxed">{denialCode.appeal_strategy}</p>
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex gap-4 items-start">
+          <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="font-bold text-blue-900 mb-2">Your path to appeal</h3>
+            <p className="text-blue-800 text-sm leading-relaxed">{denialCode.appeal_strategy}</p>
+          </div>
         </div>
 
         {/* Document checklist */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-900 mb-4">Documents to gather</h3>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h3 className="font-bold text-slate-900 mb-1 flex items-center gap-2">
+            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            Documents to gather
+          </h3>
+          <p className="text-slate-400 text-xs mb-4">Check off each item as you collect it</p>
           <ul className="space-y-3">
             {denialCode.required_documents.map((doc, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span className="mt-0.5 w-5 h-5 flex-shrink-0 border-2 border-gray-300 rounded" />
-                <span className="text-gray-700 text-sm">{doc}</span>
+              <li key={i} className="flex items-start gap-3 group">
+                <div className="mt-0.5 w-5 h-5 flex-shrink-0 border-2 border-slate-300 rounded group-hover:border-blue-400 transition-colors" />
+                <span className="text-slate-700 text-sm leading-snug">{doc}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Success tips */}
-        <div className="bg-green-50 border border-green-100 rounded-xl p-5">
-          <h3 className="font-bold text-green-900 mb-3">✅ Tips from successful appeals</h3>
-          <ul className="space-y-2">
+        <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6">
+          <h3 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
+            <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Tips from successful appeals
+          </h3>
+          <ul className="space-y-2.5">
             {denialCode.success_tips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-green-800">
-                <span className="text-green-500 mt-0.5">•</span>
-                <span>{tip}</span>
+              <li key={i} className="flex items-start gap-2.5 text-sm text-emerald-800">
+                <span className="text-emerald-400 mt-1 flex-shrink-0">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </span>
+                <span className="leading-snug">{tip}</span>
               </li>
             ))}
           </ul>
@@ -141,12 +204,15 @@ export default async function ResultsPage({ params }: { params: { caseId: string
         {/* CTA */}
         <Link
           href={`/letter/${params.caseId}`}
-          className="block w-full bg-blue-700 text-white py-4 rounded-xl font-bold text-lg text-center hover:bg-blue-800 transition"
+          className="flex items-center justify-center gap-2 w-full bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-blue-800 transition-all hover:shadow-lg"
         >
-          Generate my appeal letter →
+          Generate my appeal letter
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
         </Link>
 
-        <p className="text-center text-xs text-gray-400 pb-6">
+        <p className="text-center text-xs text-slate-400 pb-4">
           AppealKit is a free tool to help you understand your rights. It does not provide legal advice.
           For legal help, contact your local legal aid organization.
         </p>
