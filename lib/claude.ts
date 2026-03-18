@@ -1,0 +1,73 @@
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+export async function analyzeDocument(base64Content: string, mediaType: string) {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1024,
+    system: 'You are an expert in FEMA Individual Assistance appeals. Extract the following from this FEMA determination letter: 1) FEMA application number (9 digits), 2) disaster declaration number, 3) decision date (MM/DD/YYYY), 4) denial reason code or description, 5) the applicant\'s name, 6) damaged property address. Return as JSON only, no other text. Use these exact keys: application_number, disaster_number, decision_date, denial_reason, applicant_name, property_address.',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+              data: base64Content,
+            },
+          },
+          {
+            type: 'text',
+            text: 'Extract the FEMA determination letter details and return as JSON only.',
+          },
+        ],
+      },
+    ],
+  });
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('Claude did not return valid JSON');
+  return JSON.parse(jsonMatch[0]);
+}
+
+export async function generateAppealLetter(caseData: {
+  applicant_name: string;
+  application_number: string;
+  disaster_number: string;
+  decision_date: string;
+  denial_code: string;
+  property_address: string;
+  denial_title: string;
+  appeal_strategy: string;
+}) {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2048,
+    system: 'You are an expert advocate helping disaster survivors appeal FEMA Individual Assistance denials. Write a formal, compelling appeal letter. The letter must: cite 44 CFR 206.115 (the regulation requiring FEMA to provide a fair review), directly address the specific denial reason with counter-arguments, request the specific relief sought, be professional but convey urgency, and be addressed to: FEMA - Individuals & Households Program, National Processing Service Center, P.O. Box 10055, Hyattsville, MD 20782-8055. Use [DATE] as a placeholder for the current date.',
+    messages: [
+      {
+        role: 'user',
+        content: `Write an appeal letter for the following case:
+- Applicant Name: ${caseData.applicant_name}
+- Application Number: ${caseData.application_number}
+- Disaster Number: ${caseData.disaster_number}
+- Decision Date: ${caseData.decision_date}
+- Denial Reason: ${caseData.denial_title} (${caseData.denial_code})
+- Property Address: ${caseData.property_address}
+- Suggested Appeal Strategy: ${caseData.appeal_strategy}
+
+Write the complete letter ready to print and send.`,
+      },
+    ],
+  });
+
+  return response.content[0].type === 'text' ? response.content[0].text : '';
+}
+
+export default anthropic;
