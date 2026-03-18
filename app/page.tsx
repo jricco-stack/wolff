@@ -15,15 +15,23 @@ export default function HomePage() {
           <p className="text-blue-200 text-lg sm:text-xl mb-8 leading-relaxed max-w-lg mx-auto">
             Upload your denial letter and we&apos;ll explain what it means, show your deadline, and write your appeal letter — instantly.
           </p>
-          <Link
-            href="/upload"
-            className="inline-flex items-center gap-2 bg-white text-blue-900 font-extrabold text-lg px-8 py-4 rounded-2xl shadow-xl hover:bg-blue-50 transition-all hover:scale-105 active:scale-95"
-          >
-            Start your appeal
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
+          <div className="flex flex-col items-center gap-3">
+            <Link
+              href="/emergency"
+              className="inline-flex items-center gap-2 border-2 border-white/60 text-white font-bold text-base px-7 py-3.5 rounded-2xl hover:bg-white/10 transition-all"
+            >
+              Disaster just happened? Start here →
+            </Link>
+            <Link
+              href="/upload"
+              className="inline-flex items-center gap-2 bg-white text-blue-900 font-extrabold text-lg px-8 py-4 rounded-2xl shadow-xl hover:bg-blue-50 transition-all hover:scale-105 active:scale-95"
+            >
+              Start your appeal
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
           <p className="text-blue-400 text-sm mt-5">No account required · Your data is private</p>
         </div>
       </div>

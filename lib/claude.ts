@@ -78,4 +78,37 @@ Write the complete letter ready to print and send.`,
   return response.content[0].type === 'text' ? response.content[0].text : '';
 }
 
+export async function generateCallScript(
+  disasterType: string,
+  hasHomeInsurance: boolean,
+  hasFloodInsurance: boolean
+): Promise<string> {
+  const insuranceContext = [
+    hasHomeInsurance && 'homeowner\'s or renter\'s insurance',
+    hasFloodInsurance && 'separate flood insurance',
+  ].filter(Boolean).join(' and ') || 'no private insurance';
+
+  const response = await getClient().messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1024,
+    system: 'You write calm, plain-English phone scripts for disaster survivors to read verbatim when calling their insurance company. Write as spoken words, not formal prose. Short sentences. Conversational but clear. About 200 words total.',
+    messages: [
+      {
+        role: 'user',
+        content: `Write a phone call script for someone who just experienced a ${disasterType} disaster and has ${insuranceContext}.
+
+The script must include:
+1. How to open the call (name, policy number placeholder, address)
+2. What information to give the rep
+3. What to specifically ask for: claim number, adjuster's name, expected timeline, and confirmation of next steps in writing
+4. What NOT to say — remind them in plain language: do not admit fault, do not speculate on what caused the damage, do not accept any settlement offer on this first call
+
+Format as a ready-to-read script with clear sections. Use [BRACKETS] for info they need to fill in.`,
+      },
+    ],
+  });
+
+  return response.content[0].type === 'text' ? response.content[0].text : '';
+}
+
 export default getClient;
