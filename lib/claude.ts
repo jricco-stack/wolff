@@ -38,8 +38,9 @@ export async function analyzeDocument(base64Content: string, mediaType: string) 
   });
 
   const text = response.content[0].type === 'text' ? response.content[0].text : '';
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('Claude did not return valid JSON');
+  const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+  const jsonMatch = stripped.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error(`Claude did not return valid JSON. Response: ${text.slice(0, 200)}`);
   return JSON.parse(jsonMatch[0]);
 }
 
