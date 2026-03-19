@@ -111,4 +111,53 @@ Format as a ready-to-read script with clear sections. Use [BRACKETS] for info th
   return response.content[0].type === 'text' ? response.content[0].text : '';
 }
 
+export type InventoryItem = {
+  item: string;
+  room: string;
+  estimatedValue: number;
+  condition: string;
+  notes: string;
+};
+
+function detectMediaType(base64: string): 'image/jpeg' | 'image/png' | 'image/webp' {
+  if (base64.startsWith('iVBOR')) return 'image/png';
+  if (base64.startsWith('UklGR')) return 'image/webp';
+  return 'image/jpeg';
+}
+
+export async function generateInventory(imageBase64Array: string[]): Promise<InventoryItem[]> {
+  const imageBlocks = imageBase64Array.map((data) => ({
+    type: 'image' as const,
+    source: {
+      type: 'base64' as const,
+      media_type: detectMediaType(data),
+      data,
+    },
+  }));
+
+  const response = await getClient().messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 4096,
+    system: 'You are an expert insurance claims adjuster helping disaster survivors document property damage. Analyze the provided photos and identify every damaged or destroyed item visible. For each item, estimate its replacement value in USD at current retail prices. Return ONLY a valid JSON array with no other text, markdown, or explanation. Each element must have these exact fields: item (string), room (string — use "Unknown" if not determinable), estimatedValue (number, USD), condition (one of: "destroyed", "heavily damaged", "water damaged", "smoke damaged"), notes (string — any relevant detail about the damage or the item).',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          ...imageBlocks,
+          {
+            type: 'text',
+            text: 'Identify every damaged or destroyed item visible in these photos. Return a JSON array only.',
+          },
+        ],
+      },
+    ],
+  });
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+  const jsonMatch = stripped.match(/\[[\s\S]*\]/);
+  if (!jsonMatch) throw new Error(`Claude did not return a valid JSON array. Response: ${text.slice(0, 200)}`);
+  return JSON.parse(jsonMatch[0]) as InventoryItem[];
+}
+
 export default getClient;
