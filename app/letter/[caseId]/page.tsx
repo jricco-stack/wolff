@@ -1,12 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AppHeader } from '../../components/AppHeader';
 import { StepIndicator } from '../../components/StepIndicator';
 
 const STEPS = ['Upload letter', 'Review denial', 'Get letter'];
 
 export default function LetterPage({ params }: { params: { caseId: string } }) {
+  const searchParams = useSearchParams();
+  const isInsurance = searchParams.get('type') === 'insurance';
+
   const [letter, setLetter] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
@@ -17,7 +21,8 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
     setIsGenerating(true);
     setError(null);
     try {
-      const res = await fetch('/api/generate-letter', {
+      const endpoint = isInsurance ? '/api/generate-insurance-letter' : '/api/generate-letter';
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ caseId: params.caseId }),
@@ -39,7 +44,9 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `FEMA-Appeal-Letter-${params.caseId}.txt`;
+    a.download = isInsurance
+      ? `Insurance-Appeal-Letter-${params.caseId}.txt`
+      : `FEMA-Appeal-Letter-${params.caseId}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -60,15 +67,20 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
 
   return (
     <main id="main-content" className="min-h-screen bg-slate-50 flex flex-col">
-      <AppHeader backHref={`/results/${params.caseId}`} backLabel="Back to results" />
+      <AppHeader
+        backHref={isInsurance ? `/insurance-results/${params.caseId}` : `/results/${params.caseId}`}
+        backLabel="Back to results"
+      />
 
       <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
-        <StepIndicator steps={STEPS} current={3} />
+        {!isInsurance && <StepIndicator steps={STEPS} current={3} />}
 
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Your appeal letter</h1>
           <p className="text-slate-500 text-sm">
-            We&apos;ll write a complete letter based on your case. Review, edit, then mail or submit online.
+            {isInsurance
+              ? "We'll write a complete insurance appeal letter based on your denial. Review, edit, then send to your insurer."
+              : "We'll write a complete letter based on your case. Review, edit, then mail or submit online."}
           </p>
         </div>
 
@@ -82,7 +94,9 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
             </div>
             <h2 className="font-bold text-slate-900 text-lg mb-2">Ready to write your letter</h2>
             <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
-              We&apos;ll generate a professional appeal letter citing 44 CFR 206.115 — your legal right to a fair review.
+              {isInsurance
+                ? "We'll generate a professional insurance appeal letter tailored to your denial reason and insurer."
+                : "We'll generate a professional appeal letter citing 44 CFR 206.115 — your legal right to a fair review."}
             </p>
             <button
               onClick={generateLetter}
@@ -216,13 +230,22 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
                 How to submit your appeal
               </h3>
               <ol className="text-sm text-blue-800 space-y-2.5">
-                {[
-                  'Print two copies of this letter and sign both',
-                  'Attach all documents from your checklist',
-                  'Mail via USPS Certified Mail — keep your tracking receipt',
-                  'Or call FEMA at 1-800-621-3362 to submit by phone',
-                  'Or submit online at DisasterAssistance.gov',
-                ].map((step, i) => (
+                {(isInsurance
+                  ? [
+                      'Print two copies of this letter and sign both',
+                      'Attach supporting documents (photos, estimates, receipts)',
+                      'Send via USPS Certified Mail to your insurer\'s claims address — keep the tracking receipt',
+                      'Email a copy to your adjuster and request written confirmation',
+                      'Follow up by phone in 5–7 business days if no response',
+                    ]
+                  : [
+                      'Print two copies of this letter and sign both',
+                      'Attach all documents from your checklist',
+                      'Mail via USPS Certified Mail — keep your tracking receipt',
+                      'Or call FEMA at 1-800-621-3362 to submit by phone',
+                      'Or submit online at DisasterAssistance.gov',
+                    ]
+                ).map((step, i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <span className="flex-shrink-0 w-5 h-5 bg-blue-200 text-blue-800 rounded-full text-xs flex items-center justify-center font-bold mt-0.5" aria-hidden="true">{i + 1}</span>
                     <span>{step}</span>

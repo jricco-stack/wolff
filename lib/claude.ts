@@ -111,6 +111,118 @@ Format as a ready-to-read script with clear sections. Use [BRACKETS] for info th
   return response.content[0].type === 'text' ? response.content[0].text : '';
 }
 
+export type InsuranceDenialResult = {
+  insurer_name: string;
+  claim_number: string;
+  denial_reason: string;
+  appeal_deadline_days: number;
+  policy_number: string;
+  denial_date: string;
+};
+
+export type AdjusterLineItem = {
+  description: string;
+  amount: number;
+  depreciation: number;
+  net: number;
+};
+
+export type AdjusterReportResult = {
+  total_estimate: number;
+  line_items: AdjusterLineItem[];
+  depreciation_total: number;
+  acv_total: number;
+  rcv_total: number;
+  insurer_name: string;
+  claim_number: string;
+};
+
+export async function analyzeInsuranceDenial(
+  base64: string,
+  mimeType: string
+): Promise<InsuranceDenialResult> {
+  const isImage = mimeType.startsWith('image/');
+  const contentBlock = isImage
+    ? {
+        type: 'image' as const,
+        source: {
+          type: 'base64' as const,
+          media_type: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+          data: base64,
+        },
+      }
+    : {
+        type: 'document' as const,
+        source: { type: 'base64' as const, media_type: 'application/pdf' as const, data: base64 },
+      };
+
+  const response = await getClient().messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1024,
+    system: 'You are an expert in private insurance claims and appeals. Extract details from this insurance denial letter and return ONLY valid JSON with no other text or markdown. Use these exact keys: insurer_name (string), claim_number (string), denial_reason (plain English summary, 1-2 sentences), appeal_deadline_days (number — look for explicit deadlines like "30 days", "60 days"; default to 30 if not found), policy_number (string), denial_date (ISO date string YYYY-MM-DD; use today if not found).',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          contentBlock,
+          { type: 'text', text: 'Extract the insurance denial letter details and return as JSON only.' },
+        ],
+      },
+    ],
+  });
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+  const match = stripped.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error(`Claude did not return valid JSON. Response: ${text.slice(0, 200)}`);
+  const result = JSON.parse(match[0]);
+  if (!result.appeal_deadline_days || isNaN(Number(result.appeal_deadline_days))) {
+    result.appeal_deadline_days = 30;
+  }
+  return result as InsuranceDenialResult;
+}
+
+export async function analyzeAdjusterReport(
+  base64: string,
+  mimeType: string
+): Promise<AdjusterReportResult> {
+  const isImage = mimeType.startsWith('image/');
+  const contentBlock = isImage
+    ? {
+        type: 'image' as const,
+        source: {
+          type: 'base64' as const,
+          media_type: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+          data: base64,
+        },
+      }
+    : {
+        type: 'document' as const,
+        source: { type: 'base64' as const, media_type: 'application/pdf' as const, data: base64 },
+      };
+
+  const response = await getClient().messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2048,
+    system: 'You are an expert insurance adjuster analyst. Extract financial details from this adjuster report or estimate and return ONLY valid JSON with no other text or markdown. Use these exact keys: total_estimate (number), line_items (array of objects with keys: description (string), amount (number), depreciation (number), net (number)), depreciation_total (number), acv_total (number), rcv_total (number), insurer_name (string), claim_number (string). Use 0 for any numeric value you cannot find. Use an empty array for line_items if no itemized list is present.',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          contentBlock,
+          { type: 'text', text: 'Extract all financial details from this adjuster report and return as JSON only.' },
+        ],
+      },
+    ],
+  });
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+  const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+  const match = stripped.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error(`Claude did not return valid JSON. Response: ${text.slice(0, 200)}`);
+  return JSON.parse(match[0]) as AdjusterReportResult;
+}
+
 export type InventoryItem = {
   item: string;
   room: string;
