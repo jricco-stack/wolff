@@ -137,6 +137,32 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Track your deadlines */}
+      <section aria-labelledby="track-heading" className="max-w-2xl mx-auto px-4 pb-8 w-full">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex gap-4 items-start">
+          <div className="flex-shrink-0 w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center" aria-hidden="true">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 id="track-heading" className="font-bold text-slate-900 mb-1">Never miss a deadline</h2>
+            <p className="text-slate-600 text-sm leading-relaxed mb-3">
+              Every letter you upload is tracked. We show you your remaining time and remind you when deadlines are close.
+            </p>
+            <Link
+              href="/tracker"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+            >
+              View my documents
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <div className="max-w-2xl mx-auto px-4 pb-14 w-full">
         <Link

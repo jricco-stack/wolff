@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppHeader } from '../components/AppHeader';
 
@@ -73,6 +73,15 @@ const DOC_OPTIONS: DocOption[] = [
 
 type UploadStatus = 'idle' | 'uploading' | 'done' | 'error';
 
+function getOrCreateSessionId(): string {
+  let sid = localStorage.getItem('appealkit-session-id');
+  if (!sid) {
+    sid = crypto.randomUUID();
+    localStorage.setItem('appealkit-session-id', sid);
+  }
+  return sid;
+}
+
 export default function DocumentsPage() {
   const router = useRouter();
   const [selected, setSelected] = useState<DocType | null>(null);
@@ -82,6 +91,11 @@ export default function DocumentsPage() {
   const [statusMsg, setStatusMsg] = useState('');
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sessionIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    sessionIdRef.current = getOrCreateSessionId();
+  }, []);
 
   const handleSelect = (id: DocType) => {
     if (id === 'fema') {
@@ -136,10 +150,11 @@ export default function DocumentsPage() {
       const endpoint =
         selected === 'adjuster' ? '/api/analyze-adjuster' : '/api/analyze-insurance';
 
+      const sessionId = sessionIdRef.current;
       const body =
         selected === 'adjuster'
-          ? JSON.stringify({ file: base64, mimeType: file.type })
-          : JSON.stringify({ file: base64, mimeType: file.type, documentType: selected });
+          ? JSON.stringify({ file: base64, mimeType: file.type, sessionId })
+          : JSON.stringify({ file: base64, mimeType: file.type, documentType: selected, sessionId });
 
       const res = await fetch(endpoint, {
         method: 'POST',

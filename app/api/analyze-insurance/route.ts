@@ -16,7 +16,7 @@ function addDays(isoDate: string, days: number): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { file, mimeType, documentType } = await req.json();
+    const { file, mimeType, documentType, sessionId } = await req.json();
     if (!file || !mimeType) {
       return NextResponse.json({ error: 'file and mimeType are required' }, { status: 400 });
     }
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
         deadline_date: deadlineDate,
         status: 'pending',
         user_id: null,
+        session_id: sessionId || null,
       })
       .select()
       .single();

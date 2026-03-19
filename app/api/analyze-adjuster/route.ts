@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
-    const { file, mimeType } = await req.json();
+    const { file, mimeType, sessionId } = await req.json();
     if (!file || !mimeType) {
       return NextResponse.json({ error: 'file and mimeType are required' }, { status: 400 });
     }
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         appeal_letter: adjusterPayload,
         status: 'pending',
         user_id: null,
+        session_id: sessionId || null,
       })
       .select()
       .single();
