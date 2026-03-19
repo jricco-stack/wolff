@@ -2,22 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-primary-text: #ffffff;
+
+  --color-success: #059669;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
+
+  --color-warning: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
+  --shadow-elevated: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* Dark mode — minimal, keep the tool light/trustworthy */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --surface: #1e293b;
+    --border: #334155;
   }
 }
 
+/* ── Base ── */
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Component layer ── */
+@layer components {
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+      bg-blue-700 text-white font-bold
+      px-6 py-3 rounded-2xl min-h-[48px]
+      shadow-md
+      transition-all duration-200
+      hover:bg-blue-800 hover:shadow-lg
+      active:scale-[0.98]
+      disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+
+  /* Secondary / outline button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+      bg-white text-slate-700 font-bold
+      px-6 py-3 rounded-2xl min-h-[48px]
+      border-2 border-slate-200
+      transition-all duration-200
+      hover:border-slate-300 hover:bg-slate-50
+      active:scale-[0.98]
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-sm;
+  }
+
+  /* Focus ring utility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
 }
 
 @layer utilities {
