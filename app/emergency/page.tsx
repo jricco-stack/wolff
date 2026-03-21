@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 type DisasterType = 'Hurricane' | 'Flood' | 'Fire' | 'Tornado' | 'Other';
@@ -116,7 +116,7 @@ export default function EmergencyPage() {
   const toggleCheck = (i: number) => {
     setCheckedItems((prev) => {
       const next = new Set(prev);
-      next.has(i) ? next.delete(i) : next.add(i);
+      if (next.has(i)) { next.delete(i); } else { next.add(i); }
       return next;
     });
   };
@@ -178,7 +178,6 @@ export default function EmergencyPage() {
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
               {EMERGENCY_STEPS.map((s, i) => {
-                const stepKey = (['A', 'B', 'C', 'D'] as Step[])[i];
                 const current = stepToNum(step);
                 const isActive = current === i + 1;
                 const isDone = current > i + 1;
@@ -341,13 +340,13 @@ export default function EmergencyPage() {
                 <p className="text-sm text-slate-500 mb-5">Use this script when calling your insurance company to open a claim.</p>
 
                 <div className="bg-slate-50 rounded-xl p-5 font-mono text-sm text-slate-700 leading-relaxed border border-slate-200">
-                  <p className="mb-3">"Hello, my name is [Your Name] and I am calling to report a claim.</p>
+                  <p className="mb-3">&ldquo;Hello, my name is [Your Name] and I am calling to report a claim.</p>
                   <p className="mb-3">I experienced a {disaster.toLowerCase()} disaster that damaged my property at [Your Address].</p>
                   {hasHomeInsurance && <p className="mb-3">I have a homeowner&apos;s insurance policy with your company. My policy number is [Policy Number].</p>}
                   {hasFloodInsurance && <p className="mb-3">I also have a separate flood insurance policy that I would like to report a claim on.</p>}
                   {hasMortgage && <p className="mb-3">I have a mortgage on this property with [Mortgage Lender]. I understand you may need to contact them regarding the claim payment.</p>}
                   <p className="mb-3">I am calling to open a claim and would like to schedule an adjuster to assess the damage as soon as possible.</p>
-                  <p>Can you please give me my claim number and the name and contact information of the adjuster assigned to my case?"</p>
+                  <p>Can you please give me my claim number and the name and contact information of the adjuster assigned to my case?&rdquo;</p>
                 </div>
 
                 <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
