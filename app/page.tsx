@@ -51,7 +51,7 @@ export default function HomePage() {
         {/* Background image + overlay */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1920&q=80')" }}
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1640301630386-a51ca448589a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F]/95 via-[#1E3A5F]/90 to-[#0F172A]/95" aria-hidden="true" />
