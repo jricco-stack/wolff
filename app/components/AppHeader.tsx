@@ -27,7 +27,7 @@ export function AppHeader({ backHref, backLabel = 'Back', subtitle }: AppHeaderP
             href="/"
             className="font-bold text-lg tracking-tight hover:text-blue-100 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
           >
-            AppealKit
+            ClaimBack
           </Link>
         </div>
         {subtitle && (

@@ -74,10 +74,10 @@ const DOC_OPTIONS: DocOption[] = [
 type UploadStatus = 'idle' | 'uploading' | 'done' | 'error';
 
 function getOrCreateSessionId(): string {
-  let sid = localStorage.getItem('appealkit-session-id');
+  let sid = localStorage.getItem('claimback-session-id');
   if (!sid) {
     sid = crypto.randomUUID();
-    localStorage.setItem('appealkit-session-id', sid);
+    localStorage.setItem('claimback-session-id', sid);
   }
   return sid;
 }

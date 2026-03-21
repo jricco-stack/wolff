@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AppealKit — FEMA Appeal Assistant",
+  title: "ClaimBack — FEMA Appeal Assistant",
   description: "Free tool to help disaster survivors appeal FEMA denials",
 };
 

@@ -27,7 +27,7 @@ export function DeadlineBanner() {
     const dismissKey = `banner-dismissed-${todayKey()}`;
     if (localStorage.getItem(dismissKey)) return;
 
-    const sessionId = localStorage.getItem('appealkit-session-id');
+    const sessionId = localStorage.getItem('claimback-session-id');
     if (!sessionId) return;
 
     const today = new Date().toISOString().split('T')[0];

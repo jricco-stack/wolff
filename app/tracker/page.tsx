@@ -79,7 +79,7 @@ export default function TrackerPage() {
   const [updating, setUpdating] = useState<string | null>(null);
 
   useEffect(() => {
-    const sid = localStorage.getItem('appealkit-session-id');
+    const sid = localStorage.getItem('claimback-session-id');
     setSessionId(sid);
     if (!sid) { setLoading(false); return; }
 

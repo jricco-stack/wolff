@@ -120,9 +120,9 @@ export default function HomePage() {
       <section aria-labelledby="trust-heading" className="bg-slate-50 py-20 md:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 bg-blue-50 px-3 py-1 rounded-full">Why AppealKit</span>
+            <span className="inline-block text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 bg-blue-50 px-3 py-1 rounded-full">Why ClaimBack</span>
             <h2 id="trust-heading" className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">Built for trust &amp; simplicity</h2>
-            <p className="text-slate-500 text-lg max-w-lg mx-auto">We designed AppealKit to be the easiest, safest way to fight your FEMA denial</p>
+            <p className="text-slate-500 text-lg max-w-lg mx-auto">We designed ClaimBack to be the easiest, safest way to fight your FEMA denial</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {trustFeatures.map(({ bg, iconColor, title, desc, iconPath }) => (
@@ -215,7 +215,7 @@ export default function HomePage() {
             Thousands of survivors have successfully appealed their FEMA denials
           </h2>
           <p className="text-blue-200 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-            Every year, FEMA denies thousands of legitimate claims. You have the legal right to appeal — and AppealKit makes it easy. Don&apos;t give up on the assistance you deserve.
+            Every year, FEMA denies thousands of legitimate claims. You have the legal right to appeal — and ClaimBack makes it easy. Don&apos;t give up on the assistance you deserve.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/upload" className="inline-flex items-center justify-center gap-2 bg-white text-[#1E3A5F] font-extrabold text-base px-8 py-4 rounded-2xl shadow-xl hover:bg-blue-50 transition-all duration-200 hover:shadow-2xl active:scale-[0.98] w-full sm:w-auto">

@@ -80,14 +80,14 @@ export function SiteFooter() {
           <div>
             <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4">Important Notice</h3>
             <p className="text-sm text-slate-400 leading-relaxed mb-3">
-              AppealKit is a free tool to help disaster survivors understand their rights. It does not provide legal advice. For legal assistance, contact your local legal aid organization.
+              ClaimBack is a free tool to help disaster survivors understand their rights. It does not provide legal advice. For legal assistance, contact your local legal aid organization.
             </p>
             <p className="text-xs text-slate-500">Your right to appeal: 44 CFR § 206.115</p>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-slate-500">© {year} AppealKit. All rights reserved.</p>
+          <p className="text-xs text-slate-500">© {year} ClaimBack. All rights reserved.</p>
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
