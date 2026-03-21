@@ -255,7 +255,7 @@ export default function LetterPage({ params }: { params: { caseId: string } }) {
             </div>
 
             <p className="text-center text-xs text-slate-400 pb-6">
-              AppealKit does not provide legal advice. For complex cases, contact a legal aid organization.
+              ClaimBack does not provide legal advice. For complex cases, contact a legal aid organization.
             </p>
           </div>
         )}

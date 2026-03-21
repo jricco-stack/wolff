@@ -1,62 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { AppHeader } from '../components/AppHeader';
-import { StepIndicator } from '../components/StepIndicator';
 
 type DisasterType = 'Hurricane' | 'Flood' | 'Fire' | 'Tornado' | 'Other';
 type Step = 'A' | 'B' | 'C' | 'D';
 
 const EMERGENCY_STEPS = ['Disaster', 'Insurance', 'Actions', 'Call script'];
 
-const DISASTERS: { type: DisasterType; label: string; icon: React.ReactNode }[] = [
-  {
-    type: 'Hurricane',
-    label: 'Hurricane',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1M4.22 4.22l.707.707M18.364 18.364l.708.708M1 12h2m18 0h2M4.929 18.364l.707-.707M18.364 5.636l.708-.708M12 8a4 4 0 100 8 4 4 0 000-8z" />
-      </svg>
-    ),
-  },
-  {
-    type: 'Flood',
-    label: 'Flood',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 18c0 0 2-2 4-2s4 2 4 2 2-2 4-2 4 2 4 2M3 13c0 0 2-2 4-2s4 2 4 2 2-2 4-2 4 2 4 2M6 8l6-5 6 5" />
-      </svg>
-    ),
-  },
-  {
-    type: 'Fire',
-    label: 'Fire',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-      </svg>
-    ),
-  },
-  {
-    type: 'Tornado',
-    label: 'Tornado',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 6h18M5 10h14M7 14h10M9 18h6" />
-      </svg>
-    ),
-  },
-  {
-    type: 'Other',
-    label: 'Other',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
+const DISASTERS: { type: DisasterType; label: string; iconPath: string }[] = [
+  { type: 'Hurricane', label: 'Hurricane', iconPath: 'M12 3v1m0 16v1M4.22 4.22l.707.707M18.364 18.364l.708.708M1 12h2m18 0h2M4.929 18.364l.707-.707M18.364 5.636l.708-.708M12 8a4 4 0 100 8 4 4 0 000-8z' },
+  { type: 'Flood', label: 'Flood', iconPath: 'M3 18c0 0 2-2 4-2s4 2 4 2 2-2 4-2 4 2 4 2M3 13c0 0 2-2 4-2s4 2 4 2 2-2 4-2 4 2 4 2M6 8l6-5 6 5' },
+  { type: 'Fire', label: 'Fire', iconPath: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z' },
+  { type: 'Tornado', label: 'Tornado', iconPath: 'M3 6h18M5 10h14M7 14h10M9 18h6' },
+  { type: 'Other', label: 'Other', iconPath: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ];
 
 function getChecklistItems(
@@ -81,441 +38,407 @@ function getChecklistItems(
 }
 
 function YesNoToggle({
+  label,
   value,
   onChange,
-  groupLabel,
 }: {
+  label: string;
   value: boolean | null;
   onChange: (v: boolean) => void;
-  groupLabel: string;
 }) {
   return (
-    <div role="group" aria-label={groupLabel} className="flex gap-2">
-      <button
-        onClick={() => onChange(true)}
-        aria-pressed={value === true}
-        className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all duration-200 border-2 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 ${
-          value === true
-            ? 'bg-blue-700 border-blue-700 text-white'
-            : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300'
-        }`}
-      >
-        Yes
-      </button>
-      <button
-        onClick={() => onChange(false)}
-        aria-pressed={value === false}
-        className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all duration-200 border-2 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1 ${
-          value === false
-            ? 'bg-slate-700 border-slate-700 text-white'
-            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-400'
-        }`}
-      >
-        No
-      </button>
+    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+      <span className="text-sm text-slate-700 flex-1 pr-4">{label}</span>
+      <div className="flex gap-2">
+        <button
+          onClick={() => onChange(true)}
+          className={`px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            value === true
+              ? 'bg-blue-700 text-white border-blue-700'
+              : 'bg-white text-slate-500 border-slate-200 hover:border-blue-400'
+          }`}
+        >
+          Yes
+        </button>
+        <button
+          onClick={() => onChange(false)}
+          className={`px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            value === false
+              ? 'bg-slate-700 text-white border-slate-700'
+              : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400'
+          }`}
+        >
+          No
+        </button>
+      </div>
     </div>
   );
 }
 
-const STEP_ORDER: Step[] = ['A', 'B', 'C', 'D'];
-
 function stepToNum(step: Step): number {
-  return STEP_ORDER.indexOf(step) + 1;
+  return { A: 1, B: 2, C: 3, D: 4 }[step];
 }
 
+const EMERGENCY_CONTACTS = [
+  { label: 'FEMA Helpline', value: '1-800-621-3362', href: 'tel:18006213362', urgent: true },
+  { label: '911 Emergency', value: '911', href: 'tel:911', urgent: true },
+  { label: 'Red Cross', value: '1-800-733-2767', href: 'tel:18007332767', urgent: false },
+  { label: 'Crisis Hotline', value: '988', href: 'tel:988', urgent: false },
+];
+
+const RESOURCES = [
+  { label: 'DisasterAssistance.gov', href: 'https://www.disasterassistance.gov' },
+  { label: 'FEMA.gov', href: 'https://www.fema.gov' },
+  { label: 'Ready.gov', href: 'https://www.ready.gov' },
+  { label: 'SBA Disaster Loans', href: 'https://www.sba.gov/funding-programs/disaster-assistance' },
+];
+
 export default function EmergencyPage() {
+  const [disaster, setDisaster] = useState<DisasterType | null>(null);
   const [step, setStep] = useState<Step>('A');
-  const [disasterType, setDisasterType] = useState<DisasterType | null>(null);
   const [hasHomeInsurance, setHasHomeInsurance] = useState<boolean | null>(null);
   const [hasFloodInsurance, setHasFloodInsurance] = useState<boolean | null>(null);
-  const [hasContactedInsurer, setHasContactedInsurer] = useState<boolean | null>(null);
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  const [sessionId, setSessionId] = useState<string>('');
-  const [script, setScript] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [scriptError, setScriptError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [hasRentersInsurance, setHasRentersInsurance] = useState<boolean | null>(null);
+  const [hasMortgage, setHasMortgage] = useState<boolean | null>(null);
+  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    let id = localStorage.getItem('appealkit-session-id');
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem('appealkit-session-id', id);
-    }
-    setSessionId(id);
-    const saved = localStorage.getItem(`emergency-checklist-${id}`);
-    if (saved) {
-      try { setCheckedItems(JSON.parse(saved)); } catch { /* ignore */ }
-    }
-  }, []);
+  const canProceedA = disaster !== null;
+  const canProceedB =
+    hasHomeInsurance !== null &&
+    hasFloodInsurance !== null &&
+    hasRentersInsurance !== null &&
+    hasMortgage !== null;
 
-  useEffect(() => {
-    if (!sessionId) return;
-    localStorage.setItem(`emergency-checklist-${sessionId}`, JSON.stringify(checkedItems));
-  }, [checkedItems, sessionId]);
+  const checklist = disaster
+    ? getChecklistItems(disaster, hasHomeInsurance ?? false, hasFloodInsurance ?? false)
+    : [];
 
-  const toggleCheck = (item: string) => {
-    setCheckedItems(prev => ({ ...prev, [item]: !prev[item] }));
-  };
-
-  const insuranceComplete =
-    hasHomeInsurance !== null && hasFloodInsurance !== null && hasContactedInsurer !== null;
-
-  const checklistItems =
-    disasterType !== null
-      ? getChecklistItems(disasterType, hasHomeInsurance ?? false, hasFloodInsurance ?? false)
-      : [];
-
-  const generateScript = async () => {
-    setIsGenerating(true);
-    setScriptError(null);
-    try {
-      const res = await fetch('/api/call-script', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ disasterType, hasHomeInsurance, hasFloodInsurance }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to generate script');
-      setScript(data.script);
-    } catch (err: unknown) {
-      setScriptError(err instanceof Error ? err.message : 'Something went wrong.');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const copyScript = async () => {
-    await navigator.clipboard.writeText(script);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const toggleCheck = (i: number) => {
+    setCheckedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) { next.delete(i); } else { next.add(i); }
+      return next;
+    });
   };
 
   return (
-    <main id="main-content" className="min-h-screen bg-slate-50 flex flex-col">
-      <AppHeader backHref="/" backLabel="Back to home" subtitle="Emergency Guide" />
-
-      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
-        <StepIndicator steps={EMERGENCY_STEPS} current={stepToNum(step)} />
-
-        {/* ── Step A: Disaster type ── */}
-        {step === 'A' && (
-          <div>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">What type of disaster happened?</h1>
-              <p className="text-slate-500 text-sm">Select one to get guidance tailored to your situation.</p>
-            </div>
-            <div
-              role="group"
-              aria-label="Disaster type selection"
-              className="grid grid-cols-2 gap-3 sm:grid-cols-3"
-            >
-              {DISASTERS.map(({ type, label, icon }) => (
-                <button
-                  key={type}
-                  onClick={() => setDisasterType(type)}
-                  aria-pressed={disasterType === type}
-                  className={`flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 font-semibold text-base transition-all duration-200 min-h-[140px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                    disasterType === type
-                      ? 'border-blue-700 bg-blue-50 text-blue-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50/30'
-                  }`}
-                >
-                  <span className={disasterType === type ? 'text-blue-700' : 'text-slate-500'}>
-                    {icon}
-                  </span>
-                  {label}
-                </button>
-              ))}
-            </div>
-            <button
-              disabled={!disasterType}
-              onClick={() => setStep('B')}
-              className="mt-6 w-full bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 min-h-[52px]"
-            >
-              Continue
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+    <main id="main-content" className="min-h-screen bg-slate-50 pt-16">
+      {/* Red hero banner */}
+      <div className="bg-gradient-to-r from-red-700 to-red-600 text-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-red-500/40 rounded-xl flex items-center justify-center">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-            </button>
-          </div>
-        )}
-
-        {/* ── Step B: Insurance status ── */}
-        {step === 'B' && (
-          <div>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Your insurance situation</h1>
-              <p className="text-slate-500 text-sm">Answer all three questions to get your personalized action list.</p>
             </div>
-
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex gap-3 items-start">
-              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-              </svg>
-              <p className="text-amber-800 text-sm leading-relaxed">
-                <strong>Filing order matters</strong> — always file with your private insurer first.
-                FEMA is a last resort, not a replacement for insurance.
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold mb-2">Disaster just happened?</h1>
+              <p className="text-red-100 text-base max-w-xl">
+                Follow these steps carefully to protect your right to FEMA assistance and any insurance claims.
               </p>
             </div>
-
-            <div className="space-y-4">
-              {[
-                {
-                  question: "Do you have homeowner's or renter's insurance?",
-                  value: hasHomeInsurance,
-                  onChange: setHasHomeInsurance,
-                },
-                {
-                  question: 'Do you have separate flood insurance?',
-                  value: hasFloodInsurance,
-                  onChange: setHasFloodInsurance,
-                },
-                {
-                  question: 'Have you already contacted your insurer?',
-                  value: hasContactedInsurer,
-                  onChange: setHasContactedInsurer,
-                },
-              ].map(({ question, value, onChange }) => (
-                <div key={question} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-                  <p id={`q-${question.slice(0, 20)}`} className="font-semibold text-slate-900 mb-3 leading-snug">{question}</p>
-                  <YesNoToggle value={value} onChange={onChange} groupLabel={question} />
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setStep('A')}
-                className="flex-1 py-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold hover:border-slate-300 transition-all duration-200 min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Back
-              </button>
-              <button
-                disabled={!insuranceComplete}
-                onClick={() => setStep('C')}
-                className="flex-[2] bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Continue
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </button>
-            </div>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* ── Step C: Immediate action checklist ── */}
-        {step === 'C' && (
-          <div>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Do these right now</h1>
-              <p className="text-slate-500 text-sm">Check off each item as you complete it. Your progress is saved automatically.</p>
-            </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
 
-            <fieldset className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
-              <legend className="sr-only">Immediate action checklist</legend>
-              {checklistItems.map((item, i) => (
-                <label
-                  key={i}
-                  className="flex items-start gap-4 cursor-pointer group"
-                >
-                  <div className="relative flex-shrink-0 mt-0.5">
-                    <input
-                      type="checkbox"
-                      checked={!!checkedItems[item]}
-                      onChange={() => toggleCheck(item)}
-                      className="w-6 h-6 appearance-none rounded-md border-2 border-slate-300 bg-white checked:bg-emerald-500 checked:border-emerald-500 transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1 group-hover:border-blue-400"
-                    />
-                    {checkedItems[item] && (
-                      <svg
-                        className="absolute inset-0 w-6 h-6 text-white pointer-events-none"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
+          {/* Main wizard */}
+          <div className="lg:col-span-2">
+            {/* Static numbered guide cards */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold text-slate-900 mb-4">What to do right now — step by step</h2>
+              <div className="space-y-3">
+                {([
+                  { num: 1, title: 'Ensure your safety first', desc: 'Get everyone to safety. Do not re-enter a damaged structure until cleared by authorities.', color: 'bg-red-50 border-red-200', numBg: 'bg-red-600' },
+                  { num: 2, title: 'Register with FEMA', desc: 'Apply at DisasterAssistance.gov or call 1-800-621-3362 as soon as the disaster area is declared.', color: 'bg-orange-50 border-orange-200', numBg: 'bg-orange-500' },
+                  { num: 3, title: 'Document everything', desc: 'Take photos and videos of all damage before cleanup. This is critical evidence for your claims.', color: 'bg-amber-50 border-amber-200', numBg: 'bg-amber-500' },
+                  { num: 4, title: 'Contact your insurance', desc: 'File your insurance claim within 24–48 hours. Ask for a claim number and adjuster contact.', color: 'bg-blue-50 border-blue-200', numBg: 'bg-blue-600' },
+                  { num: 5, title: "Wait for FEMA’s response", desc: "FEMA will send a decision letter. Keep a record of your application number and all communications.", color: 'bg-slate-50 border-slate-200', numBg: 'bg-slate-600' },
+                  { num: 6, title: 'If denied, appeal with ClaimBack', desc: "You have 60 days to appeal a denial. Upload your letter below and we'll write your appeal instantly.", color: 'bg-emerald-50 border-emerald-200', numBg: 'bg-emerald-600' },
+                ] as { num: number; title: string; desc: string; color: string; numBg: string }[]).map(({ num, title, desc, color, numBg }) => (
+                  <div key={num} className={`flex items-start gap-4 p-4 rounded-xl border ${color}`}>
+                    <span className={`flex-shrink-0 w-7 h-7 rounded-full ${numBg} text-white text-xs font-extrabold flex items-center justify-center mt-0.5`}>
+                      {num}
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 mb-0.5">{title}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed">{desc}</p>
+                    </div>
                   </div>
-                  <span className={`text-sm leading-snug pt-0.5 transition-colors ${
-                    checkedItems[item] ? 'text-slate-400 line-through' : 'text-slate-800'
-                  }`}>
-                    {item}
-                  </span>
-                </label>
-              ))}
-            </fieldset>
-
-            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 flex gap-2 items-start">
-              <svg className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-blue-800 text-xs leading-relaxed">
-                Your checklist progress is saved on this device so you can return to it.
-              </p>
+                ))}
+              </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setStep('B')}
-                className="flex-1 py-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold hover:border-slate-300 transition-all duration-200 min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => setStep('D')}
-                className="flex-[2] bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-blue-800 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Get call script
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
+            <hr className="border-slate-200 mb-6" />
+            <h2 className="text-base font-bold text-slate-900 mb-4">Your personalized action plan</h2>
 
-        {/* ── Step D: Call script ── */}
-        {step === 'D' && (
-          <div>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Your insurance call script</h1>
-              <p className="text-slate-500 text-sm">
-                Read this verbatim when you call your insurer. It tells you exactly what to say — and what not to.
-              </p>
+            {/* Step indicator */}
+            <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
+              {EMERGENCY_STEPS.map((s, i) => {
+                const current = stepToNum(step);
+                const isActive = current === i + 1;
+                const isDone = current > i + 1;
+                return (
+                  <div key={s} className="flex items-center gap-2 flex-shrink-0">
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                      isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                    }`}>
+                      {isDone ? (
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <span>{i + 1}</span>
+                      )}
+                      {s}
+                    </div>
+                    {i < 3 && <div className="w-4 h-px bg-slate-200 flex-shrink-0" aria-hidden="true" />}
+                  </div>
+                );
+              })}
             </div>
 
-            {!script && !isGenerating && (
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-5" aria-hidden="true">
-                  <svg className="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
+            {/* Step A: Disaster type */}
+            {step === 'A' && (
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <h2 className="text-lg font-bold text-slate-900 mb-1">What type of disaster occurred?</h2>
+                <p className="text-sm text-slate-500 mb-5">Select the disaster type so we can give you the most relevant guidance.</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                  {DISASTERS.map(({ type, label, iconPath }) => (
+                    <button
+                      key={type}
+                      onClick={() => setDisaster(type)}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                        disaster === type
+                          ? 'border-blue-600 bg-blue-50 text-blue-700'
+                          : 'border-slate-200 hover:border-blue-300 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} />
+                      </svg>
+                      <span className="text-sm font-semibold">{label}</span>
+                    </button>
+                  ))}
                 </div>
-                <h2 className="font-bold text-slate-900 text-lg mb-2">Ready to write your call script</h2>
-                <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
-                  We&apos;ll generate a calm, word-for-word script for calling your insurer — tailored to your {disasterType?.toLowerCase()} situation.
-                </p>
                 <button
-                  onClick={generateScript}
-                  className="w-full bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-md hover:bg-blue-800 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 min-h-[52px]"
+                  onClick={() => canProceedA && setStep('B')}
+                  disabled={!canProceedA}
+                  className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-bold text-sm hover:bg-[#1D4ED8] disabled:opacity-40 disabled:cursor-not-allowed transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
-                  Generate my call script
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+                  Continue to Insurance →
                 </button>
               </div>
             )}
 
-            {isGenerating && (
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-10 text-center" role="status" aria-live="polite">
-                <div className="relative w-16 h-16 mx-auto mb-5" aria-hidden="true">
-                  <svg className="animate-spin absolute inset-0 w-16 h-16 text-blue-200" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+            {/* Step B: Insurance */}
+            {step === 'B' && (
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <button
+                  onClick={() => setStep('A')}
+                  className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <svg className="animate-spin absolute inset-0 w-16 h-16 text-blue-700" fill="none" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
+                  Back
+                </button>
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Tell us about your insurance</h2>
+                <p className="text-sm text-slate-500 mb-5">This helps us give you the right action steps for your situation.</p>
+                <div className="bg-slate-50 rounded-xl p-1 mb-6">
+                  <YesNoToggle label="Do you have homeowner's or renter's insurance?" value={hasHomeInsurance} onChange={setHasHomeInsurance} />
+                  <YesNoToggle label="Do you have a separate flood insurance policy?" value={hasFloodInsurance} onChange={setHasFloodInsurance} />
+                  <YesNoToggle label="Do you have renter's insurance?" value={hasRentersInsurance} onChange={setHasRentersInsurance} />
+                  <YesNoToggle label="Do you have a mortgage on this property?" value={hasMortgage} onChange={setHasMortgage} />
                 </div>
-                <p className="font-semibold text-slate-700 text-lg">Writing your call script…</p>
-                <p className="text-sm text-slate-400 mt-2">Tailoring it to your {disasterType?.toLowerCase()} situation. ~15 seconds.</p>
+                <button
+                  onClick={() => canProceedB && setStep('C')}
+                  disabled={!canProceedB}
+                  className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-bold text-sm hover:bg-[#1D4ED8] disabled:opacity-40 disabled:cursor-not-allowed transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                >
+                  See My Action Steps →
+                </button>
               </div>
             )}
 
-            {scriptError && (
-              <div role="alert" className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm flex gap-2 items-start mb-4">
-                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <div>
-                  <p>{scriptError}</p>
+            {/* Step C: Checklist */}
+            {step === 'C' && (
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <button
+                  onClick={() => setStep('B')}
+                  className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Your immediate action steps</h2>
+                <p className="text-sm text-slate-500 mb-5">
+                  Check off each item as you complete it. These steps are critical for protecting your claims.
+                </p>
+                <div className="space-y-2 mb-6" role="list" aria-label="Action checklist">
+                  {checklist.map((item, i) => (
+                    <div
+                      key={i}
+                      role="listitem"
+                      onClick={() => toggleCheck(i)}
+                      className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                        checkedItems.has(i) ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center mt-0.5 transition-colors ${
+                        checkedItems.has(i) ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300'
+                      }`}>
+                        {checkedItems.has(i) && (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-sm leading-snug ${checkedItems.has(i) ? 'text-emerald-700 line-through' : 'text-slate-700'}`}>
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">{checkedItems.size} of {checklist.length} completed</span>
                   <button
-                    onClick={generateScript}
-                    className="mt-1 text-red-600 hover:text-red-800 font-semibold underline text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-400 rounded"
+                    onClick={() => setStep('D')}
+                    className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-[#1D4ED8] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   >
-                    Try again
+                    Get Call Script →
                   </button>
                 </div>
               </div>
             )}
 
-            {script && (
-              <div className="space-y-4">
-                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                  <div className="bg-slate-50 border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-600">Insurance Call Script</span>
-                    <button
-                      onClick={copyScript}
-                      aria-label={copied ? 'Script copied to clipboard' : 'Copy script to clipboard'}
-                      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 ${
-                        copied
-                          ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-slate-100 text-slate-600 hover:bg-blue-100 hover:text-blue-700'
-                      }`}
-                    >
-                      {copied ? (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                          Copy
-                        </>
-                      )}
-                    </button>
+            {/* Step D: Call script */}
+            {step === 'D' && disaster && (
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                <button
+                  onClick={() => setStep('C')}
+                  className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
                   </div>
-                  <div className="p-6 text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-mono">
-                    {script}
-                  </div>
+                  <h2 className="text-lg font-bold text-slate-900">Your insurance call script</h2>
+                </div>
+                <p className="text-sm text-slate-500 mb-5">Use this script when calling your insurance company to open a claim.</p>
+
+                <div className="bg-slate-50 rounded-xl p-5 font-mono text-sm text-slate-700 leading-relaxed border border-slate-200">
+                  <p className="mb-3">&ldquo;Hello, my name is [Your Name] and I am calling to report a claim.</p>
+                  <p className="mb-3">I experienced a {disaster.toLowerCase()} disaster that damaged my property at [Your Address].</p>
+                  {hasHomeInsurance && <p className="mb-3">I have a homeowner&apos;s insurance policy with your company. My policy number is [Policy Number].</p>}
+                  {hasFloodInsurance && <p className="mb-3">I also have a separate flood insurance policy that I would like to report a claim on.</p>}
+                  {hasMortgage && <p className="mb-3">I have a mortgage on this property with [Mortgage Lender]. I understand you may need to contact them regarding the claim payment.</p>}
+                  <p className="mb-3">I am calling to open a claim and would like to schedule an adjuster to assess the damage as soon as possible.</p>
+                  <p>Can you please give me my claim number and the name and contact information of the adjuster assigned to my case?&rdquo;</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <Link
-                    href="/emergency/photos"
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-semibold text-sm hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 text-center min-h-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  >
-                    <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Document your damage →
-                  </Link>
-                  <Link
-                    href="/upload"
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-blue-700 text-white font-semibold text-sm hover:bg-blue-800 transition-all duration-200 shadow-sm text-center min-h-[72px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Upload a denial letter →
-                  </Link>
+                <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+                  <strong>Tip:</strong> Write down the claim number, adjuster name, and call date. You&apos;ll need these for your FEMA application.
                 </div>
-
-                <p className="text-center text-xs text-slate-400 pb-4">
-                  AppealKit does not provide legal advice. This script is a general guide — your situation may vary.
-                </p>
               </div>
             )}
 
-            {!script && !isGenerating && (
-              <button
-                onClick={() => setStep('C')}
-                className="mt-4 w-full py-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold hover:border-slate-300 transition-all duration-200 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            {/* Already received denial CTA */}
+            <div className="mt-6 bg-[#EFF6FF] border border-blue-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex-1">
+                <h3 className="font-bold text-blue-900 mb-1">Already received a denial letter?</h3>
+                <p className="text-sm text-blue-700">Upload your FEMA denial letter and we&apos;ll generate a professional appeal letter for you instantly.</p>
+              </div>
+              <Link
+                href="/upload"
+                className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-[#1D4ED8] transition-all shadow-sm flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                Back
-              </button>
-            )}
+                Upload Letter
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            </div>
           </div>
-        )}
+
+          {/* Sidebar */}
+          <div className="space-y-5">
+            {/* Emergency Contacts */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+              <h2 className="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                Emergency Contacts
+              </h2>
+              <div className="space-y-2">
+                {EMERGENCY_CONTACTS.map(({ label, value, href, urgent }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    className={`flex items-center justify-between p-3 rounded-xl transition-colors group ${
+                      urgent ? 'bg-red-50 hover:bg-red-100 border border-red-100' : 'bg-slate-50 hover:bg-slate-100 border border-slate-100'
+                    }`}
+                  >
+                    <span className={`text-xs font-medium ${urgent ? 'text-red-700' : 'text-slate-600'}`}>{label}</span>
+                    <span className={`text-sm font-bold ${urgent ? 'text-red-700' : 'text-slate-800'}`}>{value}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Helpful Resources */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+              <h2 className="font-bold text-slate-900 text-sm mb-4">Helpful Resources</h2>
+              <ul className="space-y-2.5">
+                {RESOURCES.map(({ label, href }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm text-[#2563EB] hover:text-[#1D4ED8] hover:underline transition-colors"
+                    >
+                      {label}
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Local Legal Aid */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+              <h2 className="font-bold text-amber-900 text-sm mb-2 flex items-center gap-2">
+                <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                </svg>
+                Local Legal Aid
+              </h2>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                Free legal aid is available in most disaster areas. Search for your local{' '}
+                <a href="https://www.lawhelp.org" target="_blank" rel="noopener noreferrer" className="underline font-medium hover:text-amber-900">
+                  Legal Aid organization
+                </a>{' '}
+                for free representation.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

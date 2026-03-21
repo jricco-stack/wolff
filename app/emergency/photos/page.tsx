@@ -125,10 +125,10 @@ export default function PhotosPage() {
 
   // Init session + load persisted checklist
   useEffect(() => {
-    let id = localStorage.getItem('appealkit-session-id');
+    let id = localStorage.getItem('claimback-session-id');
     if (!id) {
       id = crypto.randomUUID();
-      localStorage.setItem('appealkit-session-id', id);
+      localStorage.setItem('claimback-session-id', id);
     }
     setSessionId(id);
     const raw = localStorage.getItem(`photo-checklist-${id}`);
@@ -639,7 +639,7 @@ export default function PhotosPage() {
 
         <footer className="pb-8 pt-2">
           <p className="text-center text-xs text-slate-400 leading-relaxed">
-            AppealKit does not provide legal advice. Photo documentation is for your personal claim records.
+            ClaimBack does not provide legal advice. Photo documentation is for your personal claim records.
           </p>
         </footer>
       </div>

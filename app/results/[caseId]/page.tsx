@@ -193,7 +193,7 @@ export default async function ResultsPage({ params }: { params: { caseId: string
         </Link>
 
         <p className="text-center text-xs text-slate-400 pb-4">
-          AppealKit is a free tool to help you understand your rights. It does not provide legal advice.
+          ClaimBack is a free tool to help you understand your rights. It does not provide legal advice.
           For legal help, contact your local legal aid organization.
         </p>
       </div>

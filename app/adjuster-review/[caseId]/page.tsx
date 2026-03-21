@@ -195,7 +195,7 @@ export default async function AdjusterReviewPage({ params }: { params: { caseId:
         </Link>
 
         <p className="text-center text-xs text-slate-400 pb-4">
-          AppealKit does not provide legal advice. For disputed estimates, consult a licensed public adjuster.
+          ClaimBack does not provide legal advice. For disputed estimates, consult a licensed public adjuster.
         </p>
       </div>
     </main>

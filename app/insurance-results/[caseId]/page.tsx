@@ -155,7 +155,7 @@ export default async function InsuranceResultsPage({ params }: { params: { caseI
         </Link>
 
         <p className="text-center text-xs text-slate-400 pb-4">
-          AppealKit does not provide legal advice. For complex claims, consult a public adjuster or attorney.
+          ClaimBack does not provide legal advice. For complex claims, consult a public adjuster or attorney.
         </p>
       </div>
     </main>
