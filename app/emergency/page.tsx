@@ -147,6 +147,34 @@ export default function EmergencyPage() {
 
           {/* Main wizard */}
           <div className="lg:col-span-2">
+            {/* Static numbered guide cards */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold text-slate-900 mb-4">What to do right now — step by step</h2>
+              <div className="space-y-3">
+                {([
+                  { num: 1, title: 'Ensure your safety first', desc: 'Get everyone to safety. Do not re-enter a damaged structure until cleared by authorities.', color: 'bg-red-50 border-red-200', numBg: 'bg-red-600' },
+                  { num: 2, title: 'Register with FEMA', desc: 'Apply at DisasterAssistance.gov or call 1-800-621-3362 as soon as the disaster area is declared.', color: 'bg-orange-50 border-orange-200', numBg: 'bg-orange-500' },
+                  { num: 3, title: 'Document everything', desc: 'Take photos and videos of all damage before cleanup. This is critical evidence for your claims.', color: 'bg-amber-50 border-amber-200', numBg: 'bg-amber-500' },
+                  { num: 4, title: 'Contact your insurance', desc: 'File your insurance claim within 24–48 hours. Ask for a claim number and adjuster contact.', color: 'bg-blue-50 border-blue-200', numBg: 'bg-blue-600' },
+                  { num: 5, title: "Wait for FEMA’s response", desc: "FEMA will send a decision letter. Keep a record of your application number and all communications.", color: 'bg-slate-50 border-slate-200', numBg: 'bg-slate-600' },
+                  { num: 6, title: 'If denied, appeal with AppealKit', desc: "You have 60 days to appeal a denial. Upload your letter below and we'll write your appeal instantly.", color: 'bg-emerald-50 border-emerald-200', numBg: 'bg-emerald-600' },
+                ] as { num: number; title: string; desc: string; color: string; numBg: string }[]).map(({ num, title, desc, color, numBg }) => (
+                  <div key={num} className={`flex items-start gap-4 p-4 rounded-xl border ${color}`}>
+                    <span className={`flex-shrink-0 w-7 h-7 rounded-full ${numBg} text-white text-xs font-extrabold flex items-center justify-center mt-0.5`}>
+                      {num}
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 mb-0.5">{title}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <hr className="border-slate-200 mb-6" />
+            <h2 className="text-base font-bold text-slate-900 mb-4">Your personalized action plan</h2>
+
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
               {EMERGENCY_STEPS.map((s, i) => {

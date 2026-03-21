@@ -47,16 +47,22 @@ export default function HomePage() {
     <main id="main-content" className="flex flex-col">
 
       {/* HERO */}
-      <section className="relative pt-20 pb-20 overflow-hidden bg-gradient-to-br from-[#1E3A5F] via-[#1E3A5F] to-[#0F172A] text-white">
+      <section className="relative pt-20 pb-20 overflow-hidden text-white">
+        {/* Background image + overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1920&q=80')" }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F]/95 via-[#1E3A5F]/90 to-[#0F172A]/95" aria-hidden="true" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 text-center">
           <div className="inline-flex items-center gap-2 bg-blue-700/60 border border-blue-400/30 text-blue-100 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-widest uppercase">
             FREE · SECURE · TAKES 5 MINUTES
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight tracking-tight">
             Fight your{' '}
-            <span className="bg-gradient-to-r from-[#60A5FA] to-[#93C5FD] bg-clip-text text-transparent">
-              FEMA denial
-            </span>
+            <span className="text-[#93C5FD]">FEMA</span>{' '}
+            denial
           </h1>
           <p className="text-blue-200 text-lg sm:text-xl mb-8 leading-relaxed max-w-xl mx-auto">
             Upload your denial letter and we&apos;ll explain what it means, show your deadline, and write your appeal letter — instantly.
@@ -197,8 +203,9 @@ export default function HomePage() {
       </section>
 
       {/* COMMUNITY CTA */}
-      <section aria-labelledby="community-heading" className="relative py-20 md:py-28 bg-[#1E3A5F] text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F] to-[#0F172A] opacity-90" aria-hidden="true" />
+      <section aria-labelledby="community-heading" className="relative py-20 md:py-28 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1920&q=80')" }} aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A5F]/95 to-[#0F172A]/95" aria-hidden="true" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-200 uppercase tracking-widest mb-5 bg-blue-900/50 border border-blue-700/40 px-3 py-1.5 rounded-full">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
