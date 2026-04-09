@@ -8,7 +8,6 @@ const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Upload', path: '/upload' },
   { label: 'My Documents', path: '/tracker' },
-  { label: 'First-time applicant?', path: '/apply' },
   { label: 'Emergency', path: '/emergency' },
 ];
 
@@ -67,7 +66,17 @@ export function SiteNav() {
               ))}
             </nav>
 
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center gap-2">
+              <Link
+                href="/apply"
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  isActive('/apply')
+                    ? 'bg-blue-50 text-blue-700 border-blue-300'
+                    : 'text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300'
+                }`}
+              >
+                First-time applicant?
+              </Link>
               <Link
                 href="/upload"
                 className="inline-flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg px-4 py-2 font-semibold text-sm shadow-sm hover:shadow transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -124,7 +133,17 @@ export function SiteNav() {
               {item.label}
             </Link>
           ))}
-          <div className="mt-2 pt-2 border-t border-slate-100">
+          <div className="mt-2 pt-2 border-t border-slate-100 flex flex-col gap-2">
+            <Link
+              href="/apply"
+              className={`px-4 py-2.5 rounded-xl text-sm font-medium text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                isActive('/apply')
+                  ? 'bg-blue-50 text-blue-700 font-semibold'
+                  : 'text-blue-600 hover:bg-blue-50'
+              }`}
+            >
+              First-time applicant?
+            </Link>
             <Link
               href="/upload"
               className="flex items-center justify-center bg-[#2563EB] text-white rounded-xl py-3 font-semibold text-sm transition-colors hover:bg-[#1D4ED8]"

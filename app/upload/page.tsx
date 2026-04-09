@@ -77,10 +77,10 @@ export default function UploadPage() {
   const fileExt = file?.name.split('.').pop()?.toUpperCase() ?? '';
 
   return (
-    <main id="main-content" className="min-h-screen bg-slate-50 pt-20">
+    <main id="main-content" className="min-h-screen bg-slate-50 pt-16">
       {/* Page header */}
       <div className="bg-white border-b border-slate-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -98,7 +98,7 @@ export default function UploadPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
 
           {/* Main upload area */}

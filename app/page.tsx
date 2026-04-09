@@ -72,7 +72,7 @@ export default function HomePage() {
               Start Your Appeal
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </Link>
-            <Link href="/emergency" className="inline-flex items-center justify-center gap-2 border-2 border-white/40 text-white font-semibold text-base px-6 py-4 rounded-2xl hover:bg-white/10 transition-all duration-200 w-full sm:w-auto">
+            <Link href="/emergency" className="inline-flex items-center justify-center gap-2 border-2 border-white/60 text-white font-semibold text-base px-6 py-4 rounded-2xl hover:bg-white/10 transition-all duration-200 w-full sm:w-auto">
               Disaster just happened?
             </Link>
           </div>
@@ -96,20 +96,32 @@ export default function HomePage() {
       {/* HOW IT WORKS */}
       <section id="how-it-works" aria-labelledby="how-it-works-heading" className="bg-white py-20 md:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-16">
             <span className="inline-block text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 bg-blue-50 px-3 py-1 rounded-full">Simple Process</span>
             <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">How it works</h2>
             <p className="text-slate-500 text-lg max-w-lg mx-auto">Three simple steps to submit your appeal today</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            {steps.map(({ num, bg, border, numBg, iconColor, title, desc, iconPath }) => (
-              <div key={num} className={`bg-white border ${border} rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow`}>
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bg} mb-5`}>
-                  <svg className={`w-6 h-6 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} /></svg>
+          <div className="relative grid md:grid-cols-3 gap-8">
+            {/* Connector line — desktop only, sits behind the icon circles */}
+            <div
+              aria-hidden="true"
+              className="hidden md:block absolute top-10 left-[17%] right-[17%] h-px bg-gradient-to-r from-blue-200 via-amber-200 to-emerald-200"
+            />
+            {steps.map(({ num, numBg, title, desc, iconPath }) => (
+              <div key={num} className="relative z-10 flex flex-col items-center text-center px-4">
+                {/* Centered icon circle with step number badge */}
+                <div className="relative mb-7">
+                  <div className={`w-20 h-20 rounded-2xl ${numBg} flex items-center justify-center shadow-lg ring-4 ring-white`}>
+                    <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} />
+                    </svg>
+                  </div>
+                  <span className={`absolute -top-2 -right-2 w-7 h-7 ${numBg} text-white text-xs font-extrabold rounded-full flex items-center justify-center shadow-md ring-2 ring-white`}>
+                    {num}
+                  </span>
                 </div>
-                <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${numBg} text-white text-xs font-bold mb-4`}>{num}</span>
                 <h3 className="font-bold text-slate-900 text-lg mb-2">{title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{desc}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -126,7 +138,7 @@ export default function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {trustFeatures.map(({ bg, iconColor, title, desc, iconPath }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bg} mb-4`}>
                   <svg className={`w-6 h-6 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} /></svg>
                 </div>
@@ -222,7 +234,7 @@ export default function HomePage() {
               Start Your Appeal Now
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </Link>
-            <Link href="/emergency" className="inline-flex items-center justify-center gap-2 border-2 border-white/40 text-white font-semibold text-base px-6 py-4 rounded-2xl hover:bg-white/10 transition-all duration-200 w-full sm:w-auto">
+            <Link href="/emergency" className="inline-flex items-center justify-center gap-2 border-2 border-white/60 text-white font-semibold text-base px-6 py-4 rounded-2xl hover:bg-white/10 transition-all duration-200 w-full sm:w-auto">
               Emergency Resources
             </Link>
           </div>

@@ -66,6 +66,22 @@ body {
   }
 }
 
+/* ── Base layer ── */
+@layer base {
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: #bfdbfe; /* blue-200 */
+    color: #1e3a5f;
+  }
+
+  html {
+    scroll-padding-top: 4rem; /* account for fixed nav height */
+  }
+}
+
 /* ── Component layer ── */
 @layer components {
   /* Primary button */
