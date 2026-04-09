@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Upload', path: '/upload' },
   { label: 'My Documents', path: '/tracker' },
+  { label: 'First-time applicant?', path: '/apply' },
   { label: 'Emergency', path: '/emergency' },
 ];
 
